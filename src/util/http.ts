@@ -1,5 +1,6 @@
-import { mergeObj } from './merge'
+import { merge } from 'webpack-merge'
 import qs from 'qs'
+import { getToken } from './auth-util'
 interface IGetData {
     [prop: string]: string | number
 }
@@ -7,14 +8,16 @@ interface IGetData {
 type IPostData = BodyInit | null | object
 
 const baseURL: string = process.env.REACT_APP_API_URL as string
-const token: string = ''
-const http = (url: string, config: RequestInit): Promise<object> => {
+
+const http = (url: string, config: RequestInit) => {
+    const token = getToken()
     const baseConfig: RequestInit = {
         headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token === null ? '' : token}`
         }
     }
-    return window.fetch(`${baseURL}${url}`, mergeObj(baseConfig, config)).then(res => {
+    console.log(merge(baseConfig, config))
+    return window.fetch(`${baseURL}/${url}`, merge(baseConfig, config)).then(res => {
         if (res.status === 401) {
             // 未登录
             return Promise.reject(new Error('未登录'))
@@ -27,11 +30,11 @@ const http = (url: string, config: RequestInit): Promise<object> => {
     })
 }
 
-const httpGet = (url: string, data: IGetData | null, config: RequestInit = {}): Promise<object> => {
+const httpGet = (url: string, data: IGetData | null, config: RequestInit = {}) => {
     if (data === undefined) {
         return Promise.reject(new Error('post request need data'))
     }
-    config = mergeObj(
+    config = merge(
         {
             method: 'GET',
             headers: {}
@@ -44,12 +47,12 @@ const httpGet = (url: string, data: IGetData | null, config: RequestInit = {}): 
     return http(url, config)
 }
 
-const httpPost = (url: string, data: IPostData, config: RequestInit = {}): Promise<object> => {
+const httpPost = (url: string, data: IPostData, config: RequestInit = {}) => {
     if (data === undefined) {
         return Promise.reject(new Error('post request need data'))
     }
 
-    config = mergeObj(
+    config = merge(
         {
             method: 'POST',
             headers: {

@@ -8,22 +8,22 @@ interface IUser {
     token?: string
 }
 
-const setToken = (user: IUser) => {
+const setToken = ({ user }: { user: IUser }) => {
     localStorage.setItem(TOKEN_KEY, user.token || '')
 }
 
 const getToken = () => localStorage.getItem(TOKEN_KEY)
 
 const login = (user: IUser) => {
-    return httpPost('/login', user).then(res => {
-        setToken(res as IUser)
-        return res as IUser
+    return httpPost('login', user).then(res => {
+        setToken(res)
+        return res
     })
 }
 const register = (user: IUser) => {
-    return httpPost('/register', user).then(res => {
-        setToken(res as IUser)
-        return res as IUser
+    return httpPost('register', user).then(res => {
+        setToken(res)
+        return res
     })
 }
 const logout = async () => {
