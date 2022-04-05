@@ -4,7 +4,7 @@ import { Form, Button, Input } from 'antd'
 export default () => {
     const authContext = useAuthContext()
     const handleSubmit = (user: { username: string; password: string }) => {
-        authContext.login(user)
+        authContext.register(user)
     }
     return (
         <Form colon labelCol={{ span: 6 }} onFinish={handleSubmit}>
@@ -18,13 +18,14 @@ export default () => {
 
             <Form.Item
                 label="密码"
+                labelAlign="right"
                 name="password"
                 rules={[{ required: true, message: '请输入密码' }]}
             >
                 <Input placeholder="密码" type="password" />
             </Form.Item>
             <Button htmlType="submit" type="primary">
-                登录
+                注册
             </Button>
         </Form>
     )
