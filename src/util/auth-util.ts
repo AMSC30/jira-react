@@ -4,7 +4,7 @@ const TOKEN_KEY: string = '__token__'
 
 interface IUser {
     username: string
-    password: string
+    password?: string
     token?: string
 }
 

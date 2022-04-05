@@ -1,15 +1,20 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import { createContext, ReactNode, useContext, useState } from 'react'
 import * as authUtil from 'util/auth-util'
 import useMount from 'hooks/use-mount'
 import { httpGet } from 'util/http'
+import { QueryClient, QueryClientProvider } from 'react-query'
 
 interface IUser {
     username: string
     password: string
 }
-
+interface IResUser {
+    id: number
+    name: string
+    token: string
+}
 interface IContext {
-    user: IUser | null
+    user: IResUser | null
     login: (form: IUser) => Promise<void>
     register: (form: IUser) => Promise<void>
     logout: () => Promise<void>
@@ -28,9 +33,9 @@ const AuthContext = createContext<IContext | undefined>(undefined)
 AuthContext.displayName = 'AuthContext'
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [user, setUser] = useState<IUser | null>(null)
+    const [user, setUser] = useState<IResUser | null>(null)
 
-    const login = (form: IUser) => authUtil.login(form).then(res => setUser(res))
+    const login = (form: IUser) => authUtil.login(form).then(setUser)
     const register = (form: IUser) => authUtil.register(form).then(setUser)
 
     const logout = () =>
@@ -42,10 +47,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         bootstrapUser().then(setUser)
     })
 
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queries: {
+                refetchOnWindowFocus: false
+            }
+        }
+    })
+
     return (
-        <AuthContext.Provider value={{ user, login, register, logout }}>
-            {children}
-        </AuthContext.Provider>
+        <QueryClientProvider client={queryClient}>
+            <AuthContext.Provider value={{ user, login, register, logout }}>
+                {children}
+            </AuthContext.Provider>
+        </QueryClientProvider>
     )
 }
 
