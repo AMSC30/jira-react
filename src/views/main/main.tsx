@@ -2,6 +2,7 @@ import styled from '@emotion/styled'
 import { ReactComponent as SoftwareLogo } from 'assets/software-logo.svg'
 import Row from '../../components/row'
 import HeaderUser from './header-user'
+import Project from '../project/project'
 
 export default () => {
     return (
@@ -14,7 +15,9 @@ export default () => {
                 </Row>
                 <HeaderUser></HeaderUser>
             </PageHeader>
-            <PageMain></PageMain>
+            <PageMain>
+                <Project />
+            </PageMain>
         </>
     )
 }

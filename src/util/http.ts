@@ -16,7 +16,6 @@ const http = (url: string, config: RequestInit) => {
             Authorization: `Bearer ${token === null ? '' : token}`
         }
     }
-    console.log(merge(baseConfig, config))
     return window.fetch(`${baseURL}/${url}`, merge(baseConfig, config)).then(res => {
         if (res.status === 401) {
             // 未登录
