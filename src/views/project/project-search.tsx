@@ -1,36 +1,24 @@
 import { Form, Input, Select } from 'antd'
-import { useState } from 'react'
-import { IUser } from './project'
+import { IUser, IParam } from './project'
 
 interface IProps {
     list: IUser[] | null
+    param: IParam
+    handleChange: (data: IParam) => void
 }
-interface IParam {
-    keyword?: string
-    id?: string | number
-}
-export default ({ list }: IProps) => {
-    const [param, setParam] = useState<IParam>({
-        keyword: '',
-        id: ''
-    })
-    const handleChange = (data: IParam) => {
-        setParam({
-            ...param,
-            ...data
-        })
-    }
+
+export default ({ list, param, handleChange }: IProps) => {
     return (
-        <Form layout="inline">
+        <Form style={{ marginBottom: '10px' }} layout="inline">
             <Form.Item label="">
                 <Input
-                    value={param.keyword}
-                    onChange={evt => handleChange({ keyword: evt.target.value })}
+                    value={param.name}
+                    onChange={evt => handleChange({ name: evt.target.value })}
                     placeholder="输入项目名称"
                 />
             </Form.Item>
             <Form.Item label="">
-                <Select value={param.id} onChange={val => handleChange({ id: val })}>
+                <Select value={param.personId} onChange={val => handleChange({ personId: val })}>
                     <Select.Option value="">负责人</Select.Option>
                     {list
                         ? list.map(user => (
