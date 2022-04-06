@@ -22,9 +22,10 @@ const http = (url: string, config: RequestInit) => {
             return Promise.reject(new Error('未登录'))
         }
         if (res.ok) {
+            //typeof  res.json() is Promise
             return res.json()
         } else {
-            return Promise.reject(res.json())
+            return Promise.reject(new Error(res.statusText))
         }
     })
 }

@@ -44,7 +44,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         })
 
     useMount(() => {
-        bootstrapUser().then(setUser)
+        bootstrapUser()
+            .then(setUser)
+            .catch(e => {
+                console.error(e.message)
+            })
     })
 
     const queryClient = new QueryClient({

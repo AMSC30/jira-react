@@ -1,12 +1,11 @@
-import { Table, TableColumnsType } from 'antd'
+import { Table, TableColumnsType, TableProps } from 'antd'
 import { IProject, IUser } from './project'
 
-interface IProps {
-    list: IProject[]
+interface IProps extends TableProps<IProject> {
     userList: IUser[]
 }
 
-export default ({ list, userList }: IProps) => {
+export default ({ userList, ...rest }: IProps) => {
     const columns: TableColumnsType<IProject> = [
         {
             title: '名称',
@@ -29,5 +28,5 @@ export default ({ list, userList }: IProps) => {
         }
     ]
 
-    return <Table rowKey="id" columns={columns} dataSource={list} />
+    return <Table pagination={false} rowKey="id" columns={columns} {...rest} />
 }

@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { Typography } from 'antd'
 import { useDebounce } from 'hooks/use-debounce'
 import useMount from 'hooks/use-mount'
 import { useEffect, useState } from 'react'
@@ -30,7 +31,8 @@ export interface IParam {
 export default () => {
     const [userList, setUserList] = useState<IUser[] | null>(null)
     const [projectList, setProjectList] = useState<IProject[] | null>(null)
-
+    const [loading, setLoading] = useState<boolean>(false)
+    const [error, setError] = useState<Error | null>(null)
     const [param, setParam] = useState<{
         name: string
         personId: string | number
@@ -38,6 +40,7 @@ export default () => {
         name: '',
         personId: ''
     })
+
     const newParam = useDebounce(param, 200)
 
     useMount(() => {
@@ -45,7 +48,19 @@ export default () => {
     })
 
     useEffect(() => {
-        httpGet('projects', newParam).then(setProjectList)
+        setLoading(true)
+        httpGet('projects', newParam)
+            .then(res => {
+                setProjectList(res)
+                setError(null)
+            })
+            .catch(e => {
+                setError(e)
+                setProjectList([])
+            })
+            .finally(() => {
+                setLoading(false)
+            })
     }, [newParam])
 
     const handleChange = (data: IParam) => {
@@ -61,7 +76,12 @@ export default () => {
                 param={param}
                 handleChange={handleChange}
             ></ProjectSearch>
-            <ProjectList list={projectList || []} userList={userList || []}></ProjectList>
+            {error ? <Typography.Text type={'danger'}>{error.message}</Typography.Text> : null}
+            <ProjectList
+                dataSource={projectList || []}
+                userList={userList || []}
+                loading={loading}
+            ></ProjectList>
         </ListContainer>
     )
 }
