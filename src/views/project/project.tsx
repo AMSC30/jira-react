@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 import { Typography } from 'antd'
+import { useAsync } from 'hooks/use-async'
 import { useDebounce } from 'hooks/use-debounce'
 import useMount from 'hooks/use-mount'
 import { useEffect, useState } from 'react'
@@ -28,11 +29,7 @@ export interface IParam {
     name?: string
     personId?: string | number
 }
-export default () => {
-    const [userList, setUserList] = useState<IUser[] | null>(null)
-    const [projectList, setProjectList] = useState<IProject[] | null>(null)
-    const [loading, setLoading] = useState<boolean>(false)
-    const [error, setError] = useState<Error | null>(null)
+const useProjectParams = () => {
     const [param, setParam] = useState<{
         name: string
         personId: string | number
@@ -43,32 +40,27 @@ export default () => {
 
     const newParam = useDebounce(param, 200)
 
-    useMount(() => {
-        httpGet('users', null).then(setUserList)
-    })
-
-    useEffect(() => {
-        setLoading(true)
-        httpGet('projects', newParam)
-            .then(res => {
-                setProjectList(res)
-                setError(null)
-            })
-            .catch(e => {
-                setError(e)
-                setProjectList([])
-            })
-            .finally(() => {
-                setLoading(false)
-            })
-    }, [newParam])
-
     const handleChange = (data: IParam) => {
         setParam({
             ...param,
             ...data
         })
     }
+    return { param, newParam, handleChange }
+}
+export default () => {
+    const { data: userList, run: userRun } = useAsync<IUser[]>()
+    const { run, error, data: projectList } = useAsync<IProject[]>()
+    const { param, newParam, handleChange } = useProjectParams()
+    useMount(() => {
+        userRun(httpGet('users', null))
+    })
+
+    useEffect(() => {
+        run(httpGet('projects', newParam))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [newParam])
+
     return (
         <ListContainer>
             <ProjectSearch
@@ -77,11 +69,7 @@ export default () => {
                 handleChange={handleChange}
             ></ProjectSearch>
             {error ? <Typography.Text type={'danger'}>{error.message}</Typography.Text> : null}
-            <ProjectList
-                dataSource={projectList || []}
-                userList={userList || []}
-                loading={loading}
-            ></ProjectList>
+            <ProjectList dataSource={projectList || []} userList={userList || []}></ProjectList>
         </ListContainer>
     )
 }

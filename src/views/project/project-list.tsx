@@ -27,6 +27,5 @@ export default ({ userList, ...rest }: IProps) => {
             dataIndex: 'created'
         }
     ]
-
     return <Table pagination={false} rowKey="id" columns={columns} {...rest} />
 }
