@@ -1,4 +1,5 @@
 import { Table, TableColumnsType, TableProps } from 'antd'
+import { Link } from 'react-router-dom'
 import { IProject, IUser } from './project'
 
 interface IProps extends TableProps<IProject> {
@@ -9,7 +10,9 @@ export default ({ userList, ...rest }: IProps) => {
     const columns: TableColumnsType<IProject> = [
         {
             title: '名称',
-            dataIndex: 'name'
+            render(value, project) {
+                return <Link to={`/project/${project.id}`}>{project.name}</Link>
+            }
         },
         {
             title: '部门',

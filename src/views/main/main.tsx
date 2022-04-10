@@ -3,6 +3,9 @@ import { ReactComponent as SoftwareLogo } from 'assets/software-logo.svg'
 import Row from '../../components/row'
 import HeaderUser from './header-user'
 import Project from '../project/project'
+import { Navigate, Route, Routes } from 'react-router'
+import { BrowserRouter as Router } from 'react-router-dom'
+import ProjectDetail from 'views/project-detail/project-detail'
 
 export default () => {
     return (
@@ -16,7 +19,13 @@ export default () => {
                 <HeaderUser></HeaderUser>
             </PageHeader>
             <PageMain>
-                <Project />
+                <Router>
+                    <Routes>
+                        <Route path={'/project'} element={<Project />}></Route>
+                        <Route path={'/project/:projectId/*'} element={<ProjectDetail />}></Route>
+                        <Route path={'/'} element={<Navigate to={'/project'}></Navigate>}></Route>
+                    </Routes>
+                </Router>
             </PageMain>
         </>
     )
