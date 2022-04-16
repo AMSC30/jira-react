@@ -1,46 +1,45 @@
-# Getting Started with Create React App
+# 项目总结
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 涉及技术
 
-## Available Scripts
+### 覆盖 antd 组件库样式
 
-In the project directory, you can run:
+### css in js
 
-### `npm start`
+### react-router-dom
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### redux-toolkit
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### react-query
 
-### `npm test`
+### 单元测试
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 知识拓展
 
-### `npm run build`
+### 逻辑复用历史实现
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+mixin->HOC->render props ->hook
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. mixin：mixin 是最早实现状态和逻辑复用的方式，其实现时将 class 中公共的方法抽取成一个对象，在需要用到 mixin 中逻辑的组件中通过 mixin 属性进行混入
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+> 缺陷：
+>
+> -   隐式依赖导致关系不透明
+> -   命名可能发生冲突
 
-### `npm run eject`
+2. HOC：hoc 的使用思路是将公共的状态和逻辑抽取成一个组件，并返回一个接受组件的函数，在函数中定义可复用的组件，并将传入的组件与共用组件进行组合，返回新的组件
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+> 缺陷：
+>
+> -   扩展性不能完全代替 mixin，比如生命周期
+> -   wrapper hell 导致代码难以理解和维护
+> -   ref 传递问题
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+3. render props：将公共的状态和逻辑通过组件的方式封装起来，将需要定义的渲染结果通过 props 的方式传入到组件中，props 可以是一个组件也可以是一个返回 react 元素的函数
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+> 缺陷
+>
+> -   使用繁琐: HOC 使用只需要借助装饰器语法通常一行代码就可以进行复用,Render Props 无法做到如此简单
+> -   嵌套过深: Render Props 虽然摆脱了组件多层嵌套的问题,但是转化为了函数回调的嵌套
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+4. hook：因为组件本质上是由状态、逻辑和渲染组成的，而如果一个组件不同，往往渲染是不同的，但存在相同的状态和逻辑，hook 就是通过闭包的方式，将公共的状态和逻辑进行抽离
